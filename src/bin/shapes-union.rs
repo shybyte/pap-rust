@@ -6,7 +6,7 @@ const N: i64 = 1_000_000;
 
 
 struct Shape {
-    shapeType: usize,
+    shapeType: u8,
     width: f64,
     height: f64,
 }
@@ -15,11 +15,11 @@ const FACTOR_TABLE: &'static [f64] = &[1.0, 1.0, 0.5, PI];
 
 
 fn create_vec() -> Vec<Shape> {
-    (0..N).map(|i| Shape { shapeType: (i % 4) as usize, width: 1.123, height: 2.234 }).collect()
+    (0..N).map(|i| Shape { shapeType: (i % 4) as u8, width: 1.123, height: 2.234 }).collect()
 }
 
 fn area(shape: &Shape) -> f64 {
-    FACTOR_TABLE[shape.shapeType] * shape.width * shape.height
+    FACTOR_TABLE[shape.shapeType as usize] * shape.width * shape.height
 }
 
 fn sum_vec_index(vec: &Vec<Shape>) -> f64 {
