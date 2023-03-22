@@ -1,4 +1,5 @@
 use std::time::{Duration, Instant};
+use rayon::prelude::*;
 use std::convert::TryInto;
 use std::f64::consts::PI;
 
@@ -58,6 +59,10 @@ fn sum_vec_built_in(vec: &Vec<Shape>) -> f64 {
     vec.iter().map(|it| it.area()).sum()
 }
 
+fn sum_vec_built_in_rayon(vec: &Vec<Shape>) -> f64 {
+    vec.par_iter().map(|it| it.area()).sum()
+}
+
 
 fn main() {
     let vec = create_vec();
@@ -67,7 +72,7 @@ fn main() {
         let start = Instant::now();
         let mut complete_sun = 0.0;
 
-        complete_sun += sum_vec_built_in(&vec);
+        complete_sun += sum_vec_built_in_rayon(&vec);
 
         let duration = start.elapsed();
         min_time = min_time.min(duration);
