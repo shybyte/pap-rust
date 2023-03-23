@@ -58,7 +58,7 @@ fn main() {
     let duration_read = start_time.elapsed();
 
     let earth_radius_kilometer = 6371.0_f64;
-    let sum: f64 = data.pairs.into_iter().map(|pair| HaversineOfDegrees(pair.x0, pair.y0, pair.x1, pair.y1, earth_radius_kilometer)).sum();
+    let sum: f64 = data.pairs.par_iter().map(|pair| HaversineOfDegrees(pair.x0, pair.y0, pair.x1, pair.y1, earth_radius_kilometer)).sum();
 
     eprintln!("sum = {:?}", sum);
 

@@ -8,6 +8,7 @@ use std::io::BufReader;
 use std::path::Path;
 use std::time::{Duration, Instant};
 use std::io::Read;
+use rayon::prelude::*;
 
 use rayon::prelude::*;
 
@@ -59,12 +60,12 @@ fn main() {
     eprintln!("contents.len() = {:?}", contents.len());
 
     // https://stackoverflow.com/questions/49690459/converting-a-vecu32-to-vecu8-in-place-and-with-minimal-overhead
-    let data = unsafe {
-        let ratio = mem::size_of::<f64>() / mem::size_of::<u8>();
+    let data: Vec<[f64; 4]> = unsafe {
+        let ratio = 4 * mem::size_of::<f64>() / mem::size_of::<u8>();
 
         let length = contents.len() /  ratio;
         let capacity = contents.capacity() / ratio;
-        let ptr = contents.as_mut_ptr() as *mut f64;
+        let ptr = contents.as_mut_ptr() as *mut [f64; 4];
 
         // Don't run the destructor for vec32
         mem::forget(contents);
@@ -83,7 +84,8 @@ fn main() {
     // eprintln!("data = {:?}", data.len());
 
     let earth_radius_kilometer = 6371.0_f64;
-    let sum: f64 = data.chunks_exact(4).map(|chunk| HaversineOfDegrees(chunk[0], chunk[1], chunk[2], chunk[3], earth_radius_kilometer)).sum();
+    // let sum: f64 = data.chunks_exact(4).map(|chunk| HaversineOfDegrees(chunk[0], chunk[1], chunk[2], chunk[3], earth_radius_kilometer)).sum();
+    let sum: f64 = data.par_iter().map(|chunk| HaversineOfDegrees(chunk[0], chunk[1], chunk[2], chunk[3], earth_radius_kilometer)).sum();
 
     // let mut sum = 0.0;
     // for i in (0..data.len()).step_by(4) {
